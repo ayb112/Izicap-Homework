@@ -1,50 +1,54 @@
 pipeline{
+    
     agent any
-    tools {
-      maven 'maven3'
+    
+    environment{
+        DOCKER_TAG = getVersion()
+        
     }
-    environment {
-      DOCKER_TAG = getVersion()
-    }
+    
+    
     stages{
         stage('SCM'){
             steps{
                 git credentialsId: 'github', 
-                    url: 'https://github.com/javahometech/dockeransiblejenkins'
+                url: 'https://github.com/ayb112/Izicap-Homework'
+                
             }
         }
-        
+
+    
         stage('Maven Build'){
             steps{
                 sh "mvn clean package"
             }
+            
         }
         
         stage('Docker Build'){
             steps{
-                sh "docker build . -t kammana/hariapp:${DOCKER_TAG} "
+                echo "DOCKER_TAG engine is ${DOCKER_TAG}"
+                sh "docker build . -t ayb112/ms-siret:${DOCKER_TAG} "
             }
-        }
+            
+        }     
         
-        stage('DockerHub Push'){
+        stage('Docker Push'){
             steps{
-                withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerHubPwd')]) {
-                    sh "docker login -u kammana -p ${dockerHubPwd}"
+                withCredentials([string(credentialsId: 'docker-hub-ayb', variable: 'dockerHubPwd')]) {
+                  sh "docker login -u ayb112 -p ${dockerHubPwd} "
                 }
                 
-                sh "docker push kammana/hariapp:${DOCKER_TAG} "
+                sh "docker push ayb112/ms-siret:${DOCKER_TAG} "
             }
-        }
-        
-        stage('Docker Deploy'){
-            steps{
-              ansiblePlaybook credentialsId: 'dev-server', disableHostKeyChecking: true, extras: "-e DOCKER_TAG=${DOCKER_TAG}", installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
-            }
-        }
+            
+        }        
+    
     }
+    
 }
 
-def getVersion(){
-    def commitHash = sh label: '', returnStdout: true, script: 'git rev-parse --short HEAD'
-    return commitHash
-}
+    def getVersion (){
+         def commitHash = sh label: '', returnStdout: true, script: 'git rev-parse --short HEAD'
+         return commitHash
+    }
