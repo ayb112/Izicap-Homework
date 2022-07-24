@@ -12,7 +12,7 @@ pipeline{
         stage('SCM'){
             steps{
                 git credentialsId: 'github', 
-                url: 'https://github.com/ayb112/dockeransiblejenkins'
+                url: 'https://github.com/ayb112/Izicap-Homework'
                 
             }
         }
@@ -28,7 +28,7 @@ pipeline{
         stage('Docker Build'){
             steps{
                 echo "DOCKER_TAG engine is ${DOCKER_TAG}"
-                sh "docker build . -t ayb112/aaa:${DOCKER_TAG} "
+                sh "docker build . -t ayb112/ms-siret:${DOCKER_TAG} "
             }
             
         }     
@@ -39,7 +39,7 @@ pipeline{
                   sh "docker login -u ayb112 -p ${dockerHubPwd} "
                 }
                 
-                sh "docker push ayb112/aaa:${DOCKER_TAG} "
+                sh "docker push ayb112/ms-siret:${DOCKER_TAG} "
             }
             
         }        
