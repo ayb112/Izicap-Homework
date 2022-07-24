@@ -65,7 +65,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>dockeransible</finalName>
+		<finalName>ms-siret</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
